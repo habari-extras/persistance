@@ -1,5 +1,5 @@
 <?php
-
+namespace Habari;
 
 
 /**
@@ -64,13 +64,12 @@ class persistence extends Plugin
 	}
 
 	/**
-	 * function action_theme_loginform_controls
+	 * function action_form_login
 	 * add a checkbox to the login screen to control our cookie
 	**/
-	public function action_theme_loginform_controls()
+	public function action_form_login( $form )
 	{
-		_e( 'Remember me on this computer?' );
-		echo ' <input type="checkbox" name="persistence">';
+		$form->insert( 'submit_button', 'checkbox', 'persistence', 'null:null', _t( 'Remember me on this computer?' ) );
 	}
 
 	/**
