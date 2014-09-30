@@ -103,14 +103,9 @@ class persistence extends Plugin
 			$secure = true;
 		}
 
-		// but if we have explicitly disabled it, don't
-		if ( Config::get( 'force_secure_session' ) === false ) {
-			$secure = false;
-		}
-
 		// set the cookie on the user's PC
 		$cookiename = 'P_' . md5( Options::get( 'GUID' ) . '_Persistence' );
-		setcookie( $cookiename, $value, $time, Site::get_path(' base', true ), null, $secure );
+		setcookie( $cookiename, $value, $time, Site::get_path('base', true ), null, $secure, true );
 
 		// store a userinfo record for this value
 		$info = 'persistence_' . $value;
