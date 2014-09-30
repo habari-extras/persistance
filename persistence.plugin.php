@@ -83,14 +83,39 @@ class persistence extends Plugin
 		if ( ! isset( $_POST['persistence'] ) ) {
 			return;
 		}
-		$time= time() + 2592000;
-		$value= Utils::crypt( $user->username . $user->id . $time );
+
+		// expire the cookie in 30 days
+		$time = time() + 2592000;
+
+		// encrypt cookie value
+		$value = Utils::crypt( $user->username . $user->id . $time );
+
+		// the default is not to require a secure session
+		$secure = false;
+
+		// if we want to always require secure
+		if ( Config::get( 'force_secure_session' ) == true ) {
+			$secure = true;
+		}
+
+		// if this is an HTTPS connection by default we will
+		if ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on' ) {
+			$secure = true;
+		}
+
+		// but if we have explicitly disabled it, don't
+		if ( Config::get( 'force_secure_session' ) === false ) {
+			$secure = false;
+		}
+
 		// set the cookie on the user's PC
-		$cookiename= 'P_' . md5( Options::get( 'GUID' ) . '_Persistence' );
-		setcookie( $cookiename, $value, $time, Site::get_path(' base', true ) );
+		$cookiename = 'P_' . md5( Options::get( 'GUID' ) . '_Persistence' );
+		setcookie( $cookiename, $value, $time, Site::get_path(' base', true ), null, $secure );
+
 		// store a userinfo record for this value
-		$info= 'persistence_' . $value;
+		$info = 'persistence_' . $value;
 		$user->info->$info= $time;
+
 		// commit the change
 		$user->update();
 	}
